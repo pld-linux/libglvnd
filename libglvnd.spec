@@ -18,6 +18,8 @@ URL:		https://github.com/NVIDIA/libglvnd
 BuildRequires:	autoconf >= 2.63
 BuildRequires:	automake >= 1:1.11
 BuildRequires:	libtool
+BuildRequires:	python >= 1:2.7
+BuildRequires:	python-modules >= 1:2.7
 BuildRequires:	xorg-lib-libX11-devel
 BuildRequires:	xorg-lib-libXext-devel
 BuildRequires:	xorg-proto-glproto-devel
