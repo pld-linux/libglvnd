@@ -7,13 +7,13 @@
 Summary:	Vendor-neutral OpenGL dispatch library
 Summary(pl.UTF-8):	Niezależna od producenta biblioteka przekazująca wywołania OpenGL
 Name:		libglvnd
-Version:	0.1.1
+Version:	1.0.0
 Release:	1
 License:	MIT-like
 Group:		Libraries
 #Source0Download: https://github.com/NVIDIA/libglvnd/releases
 Source0:	https://github.com/NVIDIA/libglvnd/archive/v%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	564820301daf6b4c7d80cbfbc04efc8c
+# Source0-md5:	5145758075fddaf8ea682b7ae792ed2f
 URL:		https://github.com/NVIDIA/libglvnd
 BuildRequires:	autoconf >= 2.63
 BuildRequires:	automake >= 1:1.11
@@ -32,6 +32,8 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		gl_libdir	%{_libdir}/%{name}
 %define		noautoprov_files	%{_libdir}/%{name}
 %endif
+# _glapi_tls_Current symbol
+%define		skip_post_check_so	libOpenGL.so.* libGL.so.* libGLESv1_CM.so.* libGLESv2.so.*
 
 %description
 This is a work-in-progress implementation of the vendor-neutral
@@ -68,6 +70,32 @@ Header files for libglvnd interface.
 
 %description devel -l pl.UTF-8
 Pliki nagłówkowe interfejsu libglvnd.
+
+%package libEGL
+Summary:	EGL interface glvnd libraries
+Summary(pl.UTF-8):	Biblioteki glvnd interfejsu EGL
+Group:		Libraries
+Requires:	%{name} = %{version}-%{release}
+
+%description libEGL
+EGL interface glvnd libraries.
+
+%description libEGL -l pl.UTF-8
+Biblioteki glvnd interfejsu EGL.
+
+%package libEGL-devel
+Summary:	Development files for glvnd EGL interface
+Summary(pl.UTF-8):	Pliki programistyczne glvnd interfejsu EGL
+Group:		Development/Libraries
+Requires:	%{name}-libEGL = %{version}-%{release}
+#Requires:	khronos-EGL-headers(?)
+#%{?with_default_gl:Provides:	EGL-devel = ?}
+
+%description libEGL-devel
+Development files for glvnd EGL interface.
+
+%description libEGL-devel -l pl.UTF-8
+Pliki programistyczne glvnd interfejsu EGL.
 
 %package libGL
 Summary:	OpenGL 4.x interface glvnd libraries
@@ -150,7 +178,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %if %{without default_gl}
 install -d $RPM_BUILD_ROOT%{gl_libdir}
-%{__mv} $RPM_BUILD_ROOT%{_libdir}/lib{GL,GLESv1_CM,GLESv2}.* $RPM_BUILD_ROOT%{gl_libdir}
+%{__mv} $RPM_BUILD_ROOT%{_libdir}/lib{EGL,GL,GLESv1_CM,GLESv2}.* $RPM_BUILD_ROOT%{gl_libdir}
 %endif
 
 %clean
@@ -159,11 +187,16 @@ rm -rf $RPM_BUILD_ROOT
 %post	-p /sbin/ldconfig
 %postun	-p /sbin/ldconfig
 
+%if %{with default_gl}
+%post	libEGL -p /sbin/ldconfig
+%postun	libEGL -p /sbin/ldconfig
+
 %post	libGL -p /sbin/ldconfig
 %postun	libGL -p /sbin/ldconfig
 
 %post	libGLES -p /sbin/ldconfig
 %postun	libGLES -p /sbin/ldconfig
+%endif
 
 %files
 %defattr(644,root,root,755)
@@ -179,6 +212,20 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/libGLdispatch.so
 %{_includedir}/glvnd
 %{_pkgconfigdir}/libglvnd.pc
+
+%files libEGL
+%defattr(644,root,root,755)
+%if %{with default_gl}
+%attr(755,root,root) %{_libdir}/libEGL.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libEGL.so.1
+%else
+%attr(755,root,root) %{gl_libdir}/libEGL.so.*.*.*
+%attr(755,root,root) %{gl_libdir}/libEGL.so.1
+%endif
+
+%files libEGL-devel
+%defattr(644,root,root,755)
+%attr(755,root,root) %{gl_libdir}/libEGL.so
 
 %files libGL
 %defattr(644,root,root,755)
