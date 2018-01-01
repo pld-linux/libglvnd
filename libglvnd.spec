@@ -182,6 +182,8 @@ install -d $RPM_BUILD_ROOT%{gl_libdir}
 %{__mv} $RPM_BUILD_ROOT%{_libdir}/lib{EGL,GL,GLESv1_CM,GLESv2}.* $RPM_BUILD_ROOT%{gl_libdir}
 %endif
 
+install -d $RPM_BUILD_ROOT%{_datadir}/glvnd/egl_vendor.d
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -207,6 +209,7 @@ rm -rf $RPM_BUILD_ROOT
 %if %{without default_gl}
 %dir %{_libdir}/%{name}
 %endif
+%dir %{_datadir}/glvnd
 
 %files devel
 %defattr(644,root,root,755)
@@ -223,6 +226,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{gl_libdir}/libEGL.so.*.*.*
 %attr(755,root,root) %{gl_libdir}/libEGL.so.1
 %endif
+%dir %{_datadir}/glvnd/egl_vendor.d
 
 %files libEGL-devel
 %defattr(644,root,root,755)
