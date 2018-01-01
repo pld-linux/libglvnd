@@ -164,6 +164,7 @@ Pliki programistyczne glvnd interfejsów OpenGL ES 1, 2, 3.
 %{__autoheader}
 %{__automake}
 %configure \
+	CFLAGS="%{rpmcflags} -O1" \
 	--disable-silent-rules \
 	%{!?with_static_libs:--disable-static}
 %{__make}
