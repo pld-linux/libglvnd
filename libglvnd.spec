@@ -1,5 +1,3 @@
-# TODO:
-# - what should provide GL headers when %{with default_gl}? packages with khronos headers alone?
 #
 # Conditional build:
 %bcond_with	default_gl	# build dispatcher as default libGL/libGLX/libGLESv1_CM/libGLESv2 provider
@@ -7,13 +5,13 @@
 Summary:	Vendor-neutral OpenGL dispatch library
 Summary(pl.UTF-8):	Niezależna od producenta biblioteka przekazująca wywołania OpenGL
 Name:		libglvnd
-Version:	1.1.1
+Version:	1.2.0
 Release:	1
 License:	MIT-like
 Group:		Libraries
 #Source0Download: https://github.com/NVIDIA/libglvnd/releases
-Source0:	https://github.com/NVIDIA/libglvnd/archive/v%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	390f7934a22a17c9542621b727fc5908
+Source0:	https://github.com/NVIDIA/libglvnd/releases/download/v%{version}/%{name}-%{version}.tar.gz
+# Source0-md5:	59068b27ff62bf2ad31a028673ab58da
 URL:		https://github.com/NVIDIA/libglvnd
 BuildRequires:	autoconf >= 2.63
 BuildRequires:	automake >= 1:1.11
@@ -27,9 +25,15 @@ BuildRequires:	xorg-proto-glproto-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %if %{with default_gl}
+%define		gl_incdir	%{_includedir}
 %define		gl_libdir	%{_libdir}
+%define		gl_pcdir	%{_pkgconfigdir}
+%define		solink		%ghost
 %else
+%define		gl_incdir	%{_includedir}/%{name}
 %define		gl_libdir	%{_libdir}/%{name}
+%define		gl_pcdir	%{_libdir}/%{name}/pkgconfig
+%define		solink		%{nil}
 %define		noautoprov_files	%{_libdir}/%{name}
 %endif
 # _glapi_tls_Current symbol
@@ -71,6 +75,17 @@ Header files for libglvnd interface.
 %description devel -l pl.UTF-8
 Pliki nagłówkowe interfejsu libglvnd.
 
+%package khrplatform-devel
+Summary:	Khronos platform header file
+Summary(pl.UTF-8):	Plik nagłówkowy platformy Khronos
+Group:		Development/Libraries
+
+%description khrplatform-devel
+Khronos platform header file.
+
+%description khrplatform-devel -l pl.UTF-8
+Plik nagłówkowy platformy Khronos.
+
 %package libEGL
 Summary:	EGL interface glvnd libraries
 Summary(pl.UTF-8):	Biblioteki glvnd interfejsu EGL
@@ -88,8 +103,8 @@ Summary:	Development files for glvnd EGL interface
 Summary(pl.UTF-8):	Pliki programistyczne glvnd interfejsu EGL
 Group:		Development/Libraries
 Requires:	%{name}-libEGL = %{version}-%{release}
-#Requires:	khronos-EGL-headers(?)
-#%{?with_default_gl:Provides:	EGL-devel = ?}
+Requires:	%{name}-khrplatform-devel = %{version}-%{release}
+%{?with_default_gl:Provides:	EGL-devel = 1.5}
 
 %description libEGL-devel
 Development files for glvnd EGL interface.
@@ -113,9 +128,12 @@ Biblioteki glvnd interfejsu OpenGL 4.x.
 Summary:	Development files for glvnd OpenGL 4.x interface
 Summary(pl.UTF-8):	Pliki programistyczne glvnd interfejsu OpenGL 4.x
 Group:		Development/Libraries
+Requires:	%{name}-khrplatform-devel = %{version}-%{release}
 Requires:	%{name}-libGL = %{version}-%{release}
-#Requires:	khronos-OpenGL-headers(?)
-#%{?with_default_gl:Provides:	OpenGL-devel = 4.?}
+%if %{with default_gl}
+Provides:	OpenGL-devel = 4.6
+Provides:	OpenGL-GLX-devel = 1.4
+%endif
 
 %description libGL-devel
 Development files for glvnd OpenGL 4.x interface.
@@ -139,13 +157,13 @@ Biblioteki glvnd interfejsów OpenGL ES 1, 2, 3.
 Summary:	Development files for glvnd OpenGL ES 1, 2, 3 interfaces
 Summary(pl.UTF-8):	Pliki programistyczne glvnd interfejsów OpenGL ES 1, 2, 3
 Group:		Development/Libraries
+Requires:	%{name}-khrplatform-devel = %{version}-%{release}
 Requires:	%{name}-libGLES = %{version}-%{release}
-#Requires:	khronos-OpenGLES-headers(?)
-%if 0 && %{with default_gl}
-Provides:	OpenGLES-devel
-Provides:	OpenGLESv1-devel = 1.?
-Provides:	OpenGLESv2-devel = 2.?
-Provides:	OpenGLESv3-devel = 3.?
+%if %{with default_gl}
+Provides:	OpenGLES-devel = 3.2
+Provides:	OpenGLESv1-devel = 1.1
+Provides:	OpenGLESv2-devel = 2.0
+Provides:	OpenGLESv3-devel = 3.2
 %endif
 
 %description libGLES-devel
@@ -178,8 +196,10 @@ rm -rf $RPM_BUILD_ROOT
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/lib*.la
 
 %if %{without default_gl}
-install -d $RPM_BUILD_ROOT%{gl_libdir}
+install -d $RPM_BUILD_ROOT{%{gl_libdir},%{gl_incdir},%{gl_pcdir}}
 %{__mv} $RPM_BUILD_ROOT%{_libdir}/lib{EGL,GL,GLESv1_CM,GLESv2}.* $RPM_BUILD_ROOT%{gl_libdir}
+%{__mv} $RPM_BUILD_ROOT%{_includedir}/{EGL,GL,GLES,GLES2,GLES3,KHR} $RPM_BUILD_ROOT%{gl_incdir}
+%{__mv} $RPM_BUILD_ROOT%{_pkgconfigdir}/{egl,gl,glesv1_cm,glesv2}.pc $RPM_BUILD_ROOT%{gl_pcdir}
 %endif
 
 install -d $RPM_BUILD_ROOT%{_datadir}/glvnd/egl_vendor.d
@@ -207,7 +227,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/libGLdispatch.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libGLdispatch.so.0
 %if %{without default_gl}
-%dir %{_libdir}/%{name}
+%dir %{gl_libdir}
 %endif
 %dir %{_datadir}/glvnd
 
@@ -217,32 +237,31 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/glvnd
 %{_pkgconfigdir}/libglvnd.pc
 
+%files khrplatform-devel
+%defattr(644,root,root,755)
+%if %{without default_gl}
+%dir %{gl_incdir}
+%dir %{gl_pcdir}
+%endif
+%{gl_incdir}/KHR
+
 %files libEGL
 %defattr(644,root,root,755)
-%if %{with default_gl}
-%attr(755,root,root) %{_libdir}/libEGL.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libEGL.so.1
-%else
 %attr(755,root,root) %{gl_libdir}/libEGL.so.*.*.*
-%attr(755,root,root) %{gl_libdir}/libEGL.so.1
-%endif
+%attr(755,root,root) %solink %{gl_libdir}/libEGL.so.1
 %dir %{_datadir}/glvnd/egl_vendor.d
 
 %files libEGL-devel
 %defattr(644,root,root,755)
 %attr(755,root,root) %{gl_libdir}/libEGL.so
+%{gl_incdir}/EGL
+%{gl_pcdir}/egl.pc
 
 %files libGL
 %defattr(644,root,root,755)
-%if %{with default_gl}
-%attr(755,root,root) %{_libdir}/libGL.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libGL.so.1
-%attr(755,root,root) %{_libdir}/libGL.so
-%else
 %attr(755,root,root) %{gl_libdir}/libGL.so.*.*.*
-%attr(755,root,root) %{gl_libdir}/libGL.so.1
+%attr(755,root,root) %solink %{gl_libdir}/libGL.so.1
 %attr(755,root,root) %{gl_libdir}/libGL.so
-%endif
 
 %attr(755,root,root) %{_libdir}/libGLX.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libGLX.so.0
@@ -254,22 +273,24 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libGLX.so
 %attr(755,root,root) %{_libdir}/libOpenGL.so
+%{gl_incdir}/GL
+%{gl_pcdir}/gl.pc
+%{_pkgconfigdir}/glx.pc
+%{_pkgconfigdir}/opengl.pc
 
 %files libGLES
 %defattr(644,root,root,755)
-%if %{with default_gl}
-%attr(755,root,root) %{_libdir}/libGLESv1_CM.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libGLESv1_CM.so.1
-%attr(755,root,root) %{_libdir}/libGLESv2.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libGLESv2.so.2
-%else
 %attr(755,root,root) %{gl_libdir}/libGLESv1_CM.so.*.*.*
-%attr(755,root,root) %{gl_libdir}/libGLESv1_CM.so.1
+%attr(755,root,root) %solink %{gl_libdir}/libGLESv1_CM.so.1
 %attr(755,root,root) %{gl_libdir}/libGLESv2.so.*.*.*
-%attr(755,root,root) %{gl_libdir}/libGLESv2.so.2
-%endif
+%attr(755,root,root) %solink %{gl_libdir}/libGLESv2.so.2
 
 %files libGLES-devel
 %defattr(644,root,root,755)
 %attr(755,root,root) %{gl_libdir}/libGLESv1_CM.so
 %attr(755,root,root) %{gl_libdir}/libGLESv2.so
+%{gl_incdir}/GLES
+%{gl_incdir}/GLES2
+%{gl_incdir}/GLES3
+%{gl_pcdir}/glesv1_cm.pc
+%{gl_pcdir}/glesv2.pc
