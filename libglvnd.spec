@@ -14,10 +14,10 @@ Source0:	https://github.com/NVIDIA/libglvnd/archive/v%{version}/%{name}-%{versio
 # Source0-md5:	bb995c8d6ba13ce5973eee12b3228ebd
 URL:		https://github.com/NVIDIA/libglvnd
 BuildRequires:	meson >= 0.48
-BuildRequires:	ninja
+BuildRequires:	ninja >= 1.5
 BuildRequires:	pkgconfig
-BuildRequires:	python >= 1:2.7
-BuildRequires:	python-modules >= 1:2.7
+BuildRequires:	python3 >= 1:3.5
+BuildRequires:	python3-modules >= 1:3.5
 BuildRequires:	rpmbuild(macros) >= 1.736
 BuildRequires:	xorg-lib-libX11-devel
 BuildRequires:	xorg-lib-libXext-devel
