@@ -5,20 +5,20 @@
 Summary:	Vendor-neutral OpenGL dispatch library
 Summary(pl.UTF-8):	Niezależna od producenta biblioteka przekazująca wywołania OpenGL
 Name:		libglvnd
-Version:	1.3.1
+Version:	1.3.2
 Release:	1
 License:	MIT-like
 Group:		Libraries
 #Source0Download: https://github.com/NVIDIA/libglvnd/releases
 Source0:	https://github.com/NVIDIA/libglvnd/archive/v%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	f413526865e776688f3c0e031a7a71c1
+# Source0-md5:	bb995c8d6ba13ce5973eee12b3228ebd
 URL:		https://github.com/NVIDIA/libglvnd
-BuildRequires:	autoconf >= 2.63
-BuildRequires:	automake >= 1:1.11
-BuildRequires:	libtool
+BuildRequires:	meson >= 0.48
+BuildRequires:	ninja
 BuildRequires:	pkgconfig
 BuildRequires:	python >= 1:2.7
 BuildRequires:	python-modules >= 1:2.7
+BuildRequires:	rpmbuild(macros) >= 1.736
 BuildRequires:	xorg-lib-libX11-devel
 BuildRequires:	xorg-lib-libXext-devel
 BuildRequires:	xorg-proto-glproto-devel
@@ -176,24 +176,13 @@ Pliki programistyczne glvnd interfejsów OpenGL ES 1, 2, 3.
 %setup -q
 
 %build
-%{__libtoolize}
-%{__aclocal} -I m4
-%{__autoconf}
-%{__autoheader}
-%{__automake}
-%configure \
-	CFLAGS="%{rpmcflags} -O1" \
-	--disable-silent-rules \
-	%{!?with_static_libs:--disable-static}
-%{__make}
+%meson build
+%ninja_build -C build
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
-%{__make} install \
-	DESTDIR=$RPM_BUILD_ROOT
-
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/lib*.la
+%ninja_install -C build
 
 %if %{without default_gl}
 install -d $RPM_BUILD_ROOT{%{gl_libdir},%{gl_incdir},%{gl_pcdir}}
