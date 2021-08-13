@@ -79,6 +79,9 @@ Pliki nagłówkowe interfejsu libglvnd.
 Summary:	Khronos platform header file
 Summary(pl.UTF-8):	Plik nagłówkowy platformy Khronos
 Group:		Development/Libraries
+%if %{with default_gl}
+Provides:	khrplatform-devel
+%endif
 
 %description khrplatform-devel
 Khronos platform header file.
