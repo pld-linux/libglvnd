@@ -1,12 +1,12 @@
 #
 # Conditional build:
-%bcond_with	default_gl	# build dispatcher as default libGL/libGLX/libGLESv1_CM/libGLESv2 provider
+%bcond_without	default_gl	# build dispatcher as default libGL/libGLX/libGLESv1_CM/libGLESv2 provider
 #
 Summary:	Vendor-neutral OpenGL dispatch library
 Summary(pl.UTF-8):	Niezależna od producenta biblioteka przekazująca wywołania OpenGL
 Name:		libglvnd
 Version:	1.3.4
-Release:	1
+Release:	2
 License:	MIT-like
 Group:		Libraries
 #Source0Download: https://github.com/NVIDIA/libglvnd/releases
@@ -81,7 +81,7 @@ Summary(pl.UTF-8):	Plik nagłówkowy platformy Khronos
 Group:		Development/Libraries
 %if %{with default_gl}
 Provides:	khrplatform-devel
-Obsoletes:	Mesa-khrplatform-devel
+Obsoletes:	Mesa-khrplatform-devel < 21.3.1-2
 %endif
 
 %description khrplatform-devel
@@ -150,6 +150,9 @@ Summary:	OpenGL ES 1, 2, 3 interface glvnd libraries
 Summary(pl.UTF-8):	Biblioteki glvnd interfejsów OpenGL ES 1, 2, 3
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
+%if %{with default_gl}
+Obsoletes:	Mesa-libGLES < 21.3.1-2
+%endif
 
 %description libGLES
 OpenGL ES 1, 2, 3 interface glvnd libraries.
@@ -168,6 +171,7 @@ Provides:	OpenGLES-devel = 3.2
 Provides:	OpenGLESv1-devel = 1.1
 Provides:	OpenGLESv2-devel = 2.0
 Provides:	OpenGLESv3-devel = 3.2
+Obsoletes:	Mesa-libGLES-devel < 21.3.1-2
 %endif
 
 %description libGLES-devel
