@@ -5,13 +5,13 @@
 Summary:	Vendor-neutral OpenGL dispatch library
 Summary(pl.UTF-8):	Niezależna od producenta biblioteka przekazująca wywołania OpenGL
 Name:		libglvnd
-Version:	1.3.4
-Release:	3
+Version:	1.4.0
+Release:	1
 License:	MIT-like
 Group:		Libraries
 #Source0Download: https://github.com/NVIDIA/libglvnd/releases
 Source0:	https://github.com/NVIDIA/libglvnd/archive/v%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	765ce77bfe2e3ad182f7bc06cce4b83a
+# Source0-md5:	31a745ae2fe8b1da186c7b7231407f21
 URL:		https://github.com/NVIDIA/libglvnd
 BuildRequires:	meson >= 0.48
 BuildRequires:	ninja >= 1.5
