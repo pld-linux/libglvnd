@@ -22,7 +22,6 @@ BuildRequires:	rpmbuild(macros) >= 1.736
 BuildRequires:	xorg-lib-libX11-devel
 BuildRequires:	xorg-lib-libXext-devel
 BuildRequires:	xorg-proto-glproto-devel
-%{?with_default_gl:Conflicts:	Mesa < 21.3.1-2}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %if %{with default_gl}
@@ -122,6 +121,7 @@ Summary:	OpenGL 4.x interface glvnd libraries
 Summary(pl.UTF-8):	Biblioteki glvnd interfejsu OpenGL 4.x
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
+%{?with_default_gl:Conflicts:	Mesa-libGL < 21.3.1-2}
 
 %description libGL
 OpenGL 4.x interface glvnd libraries.
