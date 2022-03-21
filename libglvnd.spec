@@ -9,10 +9,9 @@ Version:	1.4.0
 Release:	1
 License:	MIT-like
 Group:		Libraries
-#Source0Download: https://github.com/NVIDIA/libglvnd/releases
-Source0:	https://github.com/NVIDIA/libglvnd/archive/v%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	31a745ae2fe8b1da186c7b7231407f21
-URL:		https://github.com/NVIDIA/libglvnd
+Source0:	https://gitlab.freedesktop.org/glvnd/libglvnd/uploads/ca5bf4295beb39bb324f692c481ac8a1/%{name}-%{version}.tar.gz
+# Source0-md5:	a65bca0dafbc30791fda8169dc974bbe
+URL:		https://gitlab.freedesktop.org/glvnd/libglvnd
 BuildRequires:	meson >= 0.48
 BuildRequires:	ninja >= 1.5
 BuildRequires:	pkgconfig
