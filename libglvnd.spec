@@ -5,12 +5,12 @@
 Summary:	Vendor-neutral OpenGL dispatch library
 Summary(pl.UTF-8):	Niezależna od producenta biblioteka przekazująca wywołania OpenGL
 Name:		libglvnd
-Version:	1.6.0
+Version:	1.7.0
 Release:	1
 License:	MIT-like
 Group:		Libraries
-Source0:	https://gitlab.freedesktop.org/glvnd/libglvnd/uploads/2ea903100818cb7703dbabc9a11bc025/%{name}-%{version}.tar.gz
-# Source0-md5:	0735780d0e48e37b746d6a21eab1f0c6
+Source0:	https://gitlab.freedesktop.org/glvnd/libglvnd/uploads/c24806c283070dc70700234ca8ffacf8/%{name}-%{version}.tar.gz
+# Source0-md5:	5cd61ff16ec9732f3bdf5eb46dc93699
 URL:		https://gitlab.freedesktop.org/glvnd/libglvnd
 BuildRequires:	meson >= 0.48
 BuildRequires:	ninja >= 1.5
