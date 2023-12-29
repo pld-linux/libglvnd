@@ -94,6 +94,7 @@ Summary:	EGL interface glvnd libraries
 Summary(pl.UTF-8):	Biblioteki glvnd interfejsu EGL
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
+Requires:	glvnd(EGL)%{?_isa}
 
 %description libEGL
 EGL interface glvnd libraries.
@@ -121,6 +122,7 @@ Summary(pl.UTF-8):	Biblioteki glvnd interfejsu OpenGL 4.x
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
 %{?with_default_gl:Conflicts:	Mesa-libGL < 21.3.1-2}
+Requires:	glvnd(GL)%{?_isa}
 
 %description libGL
 OpenGL 4.x interface glvnd libraries.
@@ -150,6 +152,7 @@ Summary:	OpenGL ES 1, 2, 3 interface glvnd libraries
 Summary(pl.UTF-8):	Biblioteki glvnd interfejsów OpenGL ES 1, 2, 3
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
+Requires:	glvnd(GLES)%{?_isa}
 %if %{with default_gl}
 Obsoletes:	Mesa-libGLES < 21.3.1-2
 %endif
