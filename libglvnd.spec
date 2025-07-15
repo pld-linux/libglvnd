@@ -187,13 +187,13 @@ Pliki programistyczne glvnd interfejsów OpenGL ES 1, 2, 3.
 %setup -q
 
 %build
-%meson build
-%ninja_build -C build
+%meson
+%meson_build
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
-%ninja_install -C build
+%meson_install
 
 %if %{without default_gl}
 install -d $RPM_BUILD_ROOT{%{gl_libdir},%{gl_incdir},%{gl_pcdir}}
