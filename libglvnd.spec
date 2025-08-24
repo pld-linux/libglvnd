@@ -9,6 +9,7 @@ Version:	1.7.0
 Release:	1
 License:	MIT-like
 Group:		Libraries
+#Source0Download: https://gitlab.freedesktop.org/glvnd/libglvnd/-/releases
 Source0:	https://gitlab.freedesktop.org/glvnd/libglvnd/uploads/c24806c283070dc70700234ca8ffacf8/%{name}-%{version}.tar.gz
 # Source0-md5:	5cd61ff16ec9732f3bdf5eb46dc93699
 URL:		https://gitlab.freedesktop.org/glvnd/libglvnd
